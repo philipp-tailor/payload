@@ -360,7 +360,7 @@ export function fieldReducer(state: FormState, action: FieldAction): FormState {
     }
 
     case 'UPDATE': {
-      const newField = Object.entries(action).reduce(
+      const updatedField = Object.entries(action).reduce(
         (field, [key, value]) => {
           if (
             [
@@ -373,10 +373,7 @@ export function fieldReducer(state: FormState, action: FieldAction): FormState {
               'value',
             ].includes(key)
           ) {
-            return {
-              ...field,
-              [key]: value,
-            }
+            field[key] = value
           }
 
           return field
@@ -384,12 +381,9 @@ export function fieldReducer(state: FormState, action: FieldAction): FormState {
         state?.[action.path] || ({} as FormField),
       )
 
-      const newState = {
-        ...state,
-        [action.path]: newField,
-      }
+      state[action.path] = updatedField
 
-      return newState
+      return state
     }
 
     case 'UPDATE_MANY': {
