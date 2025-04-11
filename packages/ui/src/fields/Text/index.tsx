@@ -63,6 +63,7 @@ const TextFieldComponent: TextFieldClientComponent = (props) => {
     validate: memoizedValidate,
   })
 
+  console.log('rendering text field')
   const renderRTL = isFieldRTL({
     fieldLocalized: localized,
     fieldRTL: rtl,
