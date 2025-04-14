@@ -222,11 +222,10 @@ export function fieldReducer(state: FormState, action: FieldAction): FormState {
     }
 
     case 'REMOVE': {
-      const newState = { ...state }
-      if (newState[action.path]) {
-        delete newState[action.path]
+      if (state[action.path]) {
+        delete state[action.path]
       }
-      return newState
+      return state
     }
 
     case 'REMOVE_ROW': {
@@ -336,27 +335,23 @@ export function fieldReducer(state: FormState, action: FieldAction): FormState {
     case 'SET_ALL_ROWS_COLLAPSED': {
       const { path, updatedRows } = action
 
-      return {
-        ...state,
-        [path]: {
-          ...state[path],
-          rows: updatedRows,
-        },
+      state[path] = {
+        ...state[path],
+        rows: updatedRows,
       }
+
+      return state
     }
 
     case 'SET_ROW_COLLAPSED': {
       const { path, updatedRows } = action
 
-      const newState = {
-        ...state,
-        [path]: {
-          ...state[path],
-          rows: updatedRows,
-        },
+      state[path] = {
+        ...state[path],
+        rows: updatedRows,
       }
 
-      return newState
+      return state
     }
 
     case 'UPDATE': {
@@ -387,13 +382,11 @@ export function fieldReducer(state: FormState, action: FieldAction): FormState {
     }
 
     case 'UPDATE_MANY': {
-      const newState = { ...state }
-
       Object.entries(action.formState).forEach(([path, field]) => {
-        newState[path] = field
+        state[path] = field
       })
 
-      return newState
+      return state
     }
 
     default: {
