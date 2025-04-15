@@ -17,12 +17,12 @@ import { useTranslation } from '../../providers/Translation/index.js'
 import {
   useDocumentForm,
   useForm,
-  useFormFields,
   useFormInitializing,
   useFormModified,
   useFormProcessing,
   useFormSubmitted,
 } from '../Form/context.js'
+import { useFormStore } from '../Form/fieldReducer.js'
 
 /**
  * Get and set the value of a form field.
@@ -39,8 +39,8 @@ export const useField = <TValue,>(options: Options): FieldType<TValue> => {
   const { id, collectionSlug } = useDocumentInfo()
   const operation = useOperation()
 
-  const dispatchField = useFormFields(([_, dispatch]) => dispatch)
-  const field = useFormFields(([fields]) => (fields && fields?.[path]) || null)
+  const dispatchField = useFormStore((state) => state.updateField)
+  const field = useFormStore((state) => state?.[path] || null)
 
   const { t } = useTranslation()
   const { config } = useConfig()
@@ -97,7 +97,7 @@ export const useField = <TValue,>(options: Options): FieldType<TValue> => {
         }
       }
     },
-    [setModified, path, dispatchField, disableFormData, hasRows, modified],
+    [setModified, path, /*dispatchField, */ disableFormData, hasRows, modified],
   )
 
   // Store result from hook as ref
@@ -200,9 +200,7 @@ export const useField = <TValue,>(options: Options): FieldType<TValue> => {
             update.disableFormData = true
           }
 
-          if (typeof dispatchField === 'function') {
-            dispatchField(update)
-          }
+          dispatchField(update)
         }
       }
 
@@ -212,7 +210,6 @@ export const useField = <TValue,>(options: Options): FieldType<TValue> => {
     [
       value,
       disableFormData,
-      dispatchField,
       getData,
       getSiblingData,
       getDataByPath,

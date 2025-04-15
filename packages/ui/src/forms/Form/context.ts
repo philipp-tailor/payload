@@ -4,11 +4,12 @@ import type { RenderedField } from 'payload'
 import { createContext, use } from 'react'
 import {
   createContext as createSelectorContext,
-  useContextSelector,
   useContext as useFullContext,
 } from 'use-context-selector'
 
 import type { Context, FormFieldsContext as FormFieldsContextType } from './types.js'
+
+import { useFormStore } from './fieldReducer.js'
 
 const FormContext = createContext({} as Context)
 const DocumentFormContext = createContext({} as Context)
@@ -56,7 +57,9 @@ const useFormInitializing = (): boolean => use(InitializingContext)
  */
 const useFormFields = <Value = unknown>(
   selector: (context: FormFieldsContextType) => Value,
-): Value => useContextSelector(FormFieldsContext, selector)
+): Value => {
+  return useFormStore((state) => selector([state]))
+}
 
 /**
  * Get the state of all form fields.

@@ -4,8 +4,9 @@ import type { FormField, FormState, Row } from 'payload'
 import ObjectIdImport from 'bson-objectid'
 import { dequal } from 'dequal/lite' // lite: no need for Map and Set support
 import { deepCopyObjectSimpleWithoutReactComponents } from 'payload/shared'
+import { create } from 'zustand'
 
-import type { FieldAction } from './types.js'
+import type { FieldAction, UPDATE } from './types.js'
 
 import { mergeServerFormState } from './mergeServerFormState.js'
 import { flattenRows, separateRows } from './rows.js'
@@ -16,6 +17,37 @@ const ObjectId = (ObjectIdImport.default ||
 /**
  * Reducer which modifies the form field state (all the current data of the fields in the form). When called using dispatch, it will return a new state object.
  */
+export const useFormStore = create((set, get) => ({
+  set: (newState = {}) => set(newState),
+  updateField: (action: UPDATE) => {
+    const updatedField = Object.entries(action).reduce(
+      (field, [key, value]) => {
+        if (
+          [
+            'disableFormData',
+            'errorMessage',
+            'initialValue',
+            'rows',
+            'valid',
+            'validate',
+            'value',
+          ].includes(key)
+        ) {
+          return {
+            ...field,
+            [key]: value,
+          }
+        }
+
+        return field
+      },
+      get()[action.path] || ({} as FormField),
+    )
+
+    set({ [action.path]: updatedField })
+  },
+}))
+
 export function fieldReducer(state: FormState, action: FieldAction): FormState {
   switch (action.type) {
     case 'ADD_ROW': {

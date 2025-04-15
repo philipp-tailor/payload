@@ -10,7 +10,7 @@ import {
   reduceFieldsToValues,
   wait,
 } from 'payload/shared'
-import React, { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import React, { useCallback, useEffect, /*useReducer, */ useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import type {
@@ -37,11 +37,11 @@ import { useTranslation } from '../../providers/Translation/index.js'
 import { useUploadHandlers } from '../../providers/UploadHandlers/index.js'
 import { abortAndIgnore, handleAbortRef } from '../../utilities/abortAndIgnore.js'
 import { requests } from '../../utilities/api.js'
+import { useFormStore } from '../Form/fieldReducer.js'
 import {
   BackgroundProcessingContext,
   DocumentFormContext,
   FormContext,
-  FormFieldsContext,
   FormWatchContext,
   InitializingContext,
   ModifiedContext,
@@ -50,7 +50,6 @@ import {
   useDocumentForm,
 } from './context.js'
 import { errorMessages } from './errorMessages.js'
-import { fieldReducer } from './fieldReducer.js'
 import { initContextState } from './initContextState.js'
 
 const baseClass = 'form'
@@ -119,10 +118,11 @@ export const Form: React.FC<FormProps> = (props) => {
   const abortResetFormRef = useRef<AbortController>(null)
   const isFirstRenderRef = useRef(true)
 
-  const fieldsReducer = useReducer(fieldReducer, {}, () => initialState)
+  const set = useFormStore((state) => state.set)
+  useEffect(() => set(initialState), [initialState])
 
-  const [formState, dispatchFields] = fieldsReducer
-
+  const store = useFormStore()
+  const formState = store
   contextRef.current.fields = formState
 
   const prevFormState = useRef(formState)
@@ -190,13 +190,13 @@ export const Form: React.FC<FormProps> = (props) => {
     await Promise.all(validationPromises)
 
     if (!dequal(contextRef.current.fields, validatedFieldState)) {
-      dispatchFields({ type: 'REPLACE_STATE', state: validatedFieldState })
+      // dispatchFields({ type: 'REPLACE_STATE', state: validatedFieldState })
     }
 
     setIsValid(isValid)
 
     return isValid
-  }, [collectionSlug, config, dispatchFields, id, operation, t, user, documentForm])
+  }, [collectionSlug, config, /*dispatchFields,*/ id, operation, t, user, documentForm])
 
   const submit = useCallback(
     async (options: SubmitOptions = {}, e): Promise<void> => {
@@ -281,7 +281,8 @@ export const Form: React.FC<FormProps> = (props) => {
           setProcessing(false)
           setSubmitted(true)
           setDisabled(false)
-          return dispatchFields({ type: 'REPLACE_STATE', state: revalidatedFormState })
+          return
+          // return dispatchFields({ type: 'REPLACE_STATE', state: revalidatedFormState })
         }
       }
 
@@ -370,12 +371,12 @@ export const Form: React.FC<FormProps> = (props) => {
             const newFormState = await onSuccess(json)
 
             if (newFormState) {
-              dispatchFields({
-                type: 'MERGE_SERVER_STATE',
-                acceptValues: true,
-                prevStateRef: prevFormState,
-                serverState: newFormState,
-              })
+              // dispatchFields({
+              //   type: 'MERGE_SERVER_STATE',
+              //   acceptValues: true,
+              //   prevStateRef: prevFormState,
+              //   serverState: newFormState,
+              // })
             }
           }
           setSubmitted(false)
@@ -426,10 +427,10 @@ export const Form: React.FC<FormProps> = (props) => {
 
             setIsValid(false)
 
-            dispatchFields({
-              type: 'ADD_SERVER_ERRORS',
-              errors: fieldErrors,
-            })
+            // dispatchFields({
+            //   type: 'ADD_SERVER_ERRORS',
+            //   errors: fieldErrors,
+            // })
 
             nonFieldErrors.forEach((err) => {
               errorToast(<FieldErrorsToast errorMessage={err.message || t('error:unknown')} />)
@@ -457,7 +458,7 @@ export const Form: React.FC<FormProps> = (props) => {
       disableSuccessStatus,
       disableValidationOnSubmit,
       disabled,
-      dispatchFields,
+      // dispatchFields,
       handleResponse,
       method,
       onSubmit,
@@ -567,13 +568,12 @@ export const Form: React.FC<FormProps> = (props) => {
 
       contextRef.current = { ...initContextState } as FormContextType
       setModified(false)
-      dispatchFields({ type: 'REPLACE_STATE', state: newState })
-
+      // dispatchFields({ type: 'REPLACE_STATE', state: newState })
       abortResetFormRef.current = null
     },
     [
       collectionSlug,
-      dispatchFields,
+      // dispatchFields,
       globalSlug,
       id,
       operation,
@@ -588,9 +588,11 @@ export const Form: React.FC<FormProps> = (props) => {
     (state: FormState) => {
       contextRef.current = { ...initContextState } as FormContextType
       setModified(false)
-      dispatchFields({ type: 'REPLACE_STATE', state })
+      // dispatchFields({ type: 'REPLACE_STATE', state })
     },
-    [dispatchFields],
+    [
+      //dispatchFields
+    ],
   )
 
   const addFieldRow: FormContextType['addFieldRow'] = useCallback(
@@ -600,40 +602,48 @@ export const Form: React.FC<FormProps> = (props) => {
 
       // dispatch ADD_ROW adds a blank row to local form state.
       // This performs no form state request, as the debounced onChange effect will do that for us.
-      dispatchFields({
-        type: 'ADD_ROW',
-        blockType,
-        path,
-        rowIndex,
-        subFieldState,
-      })
+      // dispatchFields({
+      //   type: 'ADD_ROW',
+      //   blockType,
+      //   path,
+      //   rowIndex,
+      //   subFieldState,
+      // })
 
       setModified(true)
     },
-    [dispatchFields, getDataByPath],
+    [
+      //dispatchFields,
+      getDataByPath,
+    ],
   )
 
   const moveFieldRow: FormContextType['moveFieldRow'] = useCallback(
     ({ moveFromIndex, moveToIndex, path }) => {
-      dispatchFields({
-        type: 'MOVE_ROW',
-        moveFromIndex,
-        moveToIndex,
-        path,
-      })
+      console.log('would run moveFieldRow')
+      // dispatchFields({
+      //   type: 'MOVE_ROW',
+      //   moveFromIndex,
+      //   moveToIndex,
+      //   path,
+      // })
 
       setModified(true)
     },
-    [dispatchFields],
+    [
+      //dispatchFields
+    ],
   )
 
   const removeFieldRow: FormContextType['removeFieldRow'] = useCallback(
     ({ path, rowIndex }) => {
-      dispatchFields({ type: 'REMOVE_ROW', path, rowIndex })
+      // dispatchFields({ type: 'REMOVE_ROW', path, rowIndex })
 
       setModified(true)
     },
-    [dispatchFields],
+    [
+      //dispatchFields
+    ],
   )
 
   const replaceFieldRow: FormContextType['replaceFieldRow'] = useCallback(
@@ -641,17 +651,20 @@ export const Form: React.FC<FormProps> = (props) => {
       const currentRows: unknown[] = getDataByPath(path)
       const rowIndex = rowIndexArg === undefined ? currentRows.length : rowIndexArg
 
-      dispatchFields({
-        type: 'REPLACE_ROW',
-        blockType,
-        path,
-        rowIndex,
-        subFieldState,
-      })
+      // dispatchFields({
+      //   type: 'REPLACE_ROW',
+      //   blockType,
+      //   path,
+      //   rowIndex,
+      //   subFieldState,
+      // })
 
       setModified(true)
     },
-    [dispatchFields, getDataByPath],
+    [
+      //dispatchFields,
+      getDataByPath,
+    ],
   )
 
   useEffect(() => {
@@ -687,7 +700,7 @@ export const Form: React.FC<FormProps> = (props) => {
   contextRef.current.formRef = formRef
   contextRef.current.reset = reset
   contextRef.current.replaceState = replaceState
-  contextRef.current.dispatchFields = dispatchFields
+  // contextRef.current.dispatchFields = dispatchFields
   contextRef.current.addFieldRow = addFieldRow
   contextRef.current.removeFieldRow = removeFieldRow
   contextRef.current.moveFieldRow = moveFieldRow
@@ -715,14 +728,17 @@ export const Form: React.FC<FormProps> = (props) => {
   useEffect(() => {
     if (initialState) {
       contextRef.current = { ...initContextState } as FormContextType
-      dispatchFields({
-        type: 'REPLACE_STATE',
-        optimize: false,
-        sanitize: true,
-        state: initialState,
-      })
+      // dispatchFields({
+      //   type: 'REPLACE_STATE',
+      //   optimize: false,
+      //   sanitize: true,
+      //   state: initialState,
+      // })
     }
-  }, [initialState, dispatchFields])
+  }, [
+    initialState,
+    //dispatchFields
+  ])
 
   useThrottledEffect(
     () => {
@@ -752,11 +768,11 @@ export const Form: React.FC<FormProps> = (props) => {
           })
         }
 
-        dispatchFields({
-          type: 'MERGE_SERVER_STATE',
-          prevStateRef: prevFormState,
-          serverState,
-        })
+        // dispatchFields({
+        //   type: 'MERGE_SERVER_STATE',
+        //   prevStateRef: prevFormState,
+        //   serverState,
+        // })
       }
     })
   })
@@ -796,29 +812,36 @@ export const Form: React.FC<FormProps> = (props) => {
       ref={formRef}
     >
       <DocumentFormContextComponent {...documentFormContextProps}>
-        <FormContext value={contextRef.current}>
-          <FormWatchContext
-            value={{
-              fields: formState,
-              ...contextRef.current,
-            }}
-          >
-            <SubmittedContext value={submitted}>
-              <InitializingContext value={!isMounted || (isMounted && initializing)}>
-                <ProcessingContext value={processing}>
-                  <BackgroundProcessingContext value={backgroundProcessing}>
-                    <ModifiedContext value={modified}>
-                      {/* eslint-disable-next-line @eslint-react/no-context-provider */}
-                      <FormFieldsContext.Provider value={fieldsReducer}>
-                        {children}
-                      </FormFieldsContext.Provider>
-                    </ModifiedContext>
-                  </BackgroundProcessingContext>
-                </ProcessingContext>
-              </InitializingContext>
-            </SubmittedContext>
-          </FormWatchContext>
-        </FormContext>
+        {
+          //        <FormContext value={contextRef.current}>
+        }
+        {
+          // <FormWatchContext
+          //   value={{
+          //     fields: formState,
+          //     ...contextRef.current,
+          //   }}
+          // >
+        }{' '}
+        <SubmittedContext value={submitted}>
+          <InitializingContext value={!isMounted || (isMounted && initializing)}>
+            <ProcessingContext value={processing}>
+              <BackgroundProcessingContext value={backgroundProcessing}>
+                <ModifiedContext value={modified}>
+                  { }
+                  {/*<FormFieldsContext.Provider value={fieldsReducer}>*/} {children}
+                  {/*</FormFieldsContext.Provider>*/}
+                </ModifiedContext>
+              </BackgroundProcessingContext>
+            </ProcessingContext>
+          </InitializingContext>
+        </SubmittedContext>
+        {
+          //</FormWatchContext>
+        }
+        {
+          //</FormContext>
+        }{' '}
       </DocumentFormContextComponent>
     </El>
   )
