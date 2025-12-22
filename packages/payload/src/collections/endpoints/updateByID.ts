@@ -8,7 +8,7 @@ import { parseParams } from '../../utilities/parseParams/index.js'
 import { updateByIDOperation } from '../operations/updateByID.js'
 
 export const updateByIDHandler: PayloadHandler = async (req) => {
-  const { id, collection } = getRequestCollectionWithID(req)
+  const { id, collection, identifierField } = getRequestCollectionWithID(req)
 
   const { autosave, depth, draft, overrideLock, populate, publishSpecificLocale, select, trash } =
     parseParams(req.query)
@@ -20,6 +20,7 @@ export const updateByIDHandler: PayloadHandler = async (req) => {
     data: req.data!,
     depth,
     draft,
+    identifierField,
     overrideLock: overrideLock ?? false,
     populate,
     publishSpecificLocale,

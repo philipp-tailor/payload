@@ -42,6 +42,11 @@ export type Arguments<TSlug extends CollectionSlug> = {
   disableVerificationEmail?: boolean
   draft?: boolean
   id: number | string
+  /**
+   * Optional identifier field name to use for lookup instead of 'id'.
+   * When provided, the query will use this field for document lookup.
+   */
+  identifierField?: string
   overrideAccess?: boolean
   overrideLock?: boolean
   overwriteExistingFiles?: boolean
@@ -85,6 +90,7 @@ export const updateByIDOperation = async <
       collection,
       depth,
       draft: draftArg = false,
+      identifierField = 'id',
       overrideAccess,
       overrideLock,
       overwriteExistingFiles = false,
@@ -121,7 +127,7 @@ export const updateByIDOperation = async <
     // Retrieve document
     // /////////////////////////////////////
 
-    const where = { id: { equals: id } }
+    const where = { [identifierField]: { equals: id } }
 
     let fullWhere = combineQueries(where, accessResults)
 

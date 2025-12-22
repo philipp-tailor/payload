@@ -470,6 +470,19 @@ export type CollectionAdminOptions = {
    * Field to use as title in Edit View and first column in List view
    */
   useAsTitle?: string
+  /**
+   * Field name to use as the URL identifier in routes.
+   * Must be a unique, non-virtual, non-relationship text or number field.
+   * Defaults to 'id' if not specified.
+   *
+   * @example
+   * ```ts
+   * admin: {
+   *   useAsUrlIdentifier: 'slug'
+   * }
+   * ```
+   */
+  useAsUrlIdentifier?: string
 }
 
 /** Manage all aspects of a data collection */

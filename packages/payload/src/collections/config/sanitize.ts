@@ -26,6 +26,7 @@ import {
 } from './defaults.js'
 import { sanitizeCompoundIndexes } from './sanitizeCompoundIndexes.js'
 import { validateUseAsTitle } from './useAsTitle.js'
+import { validateUseAsUrlIdentifier } from './useAsUrlIdentifier.js'
 
 export const sanitizeCollection = async (
   config: Config,
@@ -268,6 +269,7 @@ export const sanitizeCollection = async (
   }
 
   validateUseAsTitle(sanitized)
+  validateUseAsUrlIdentifier(sanitized)
 
   const sanitizedConfig = sanitized as SanitizedCollectionConfig
 

@@ -46,6 +46,10 @@ export type Arguments<TSlug extends CollectionSlug> = {
   disableVerificationEmail?: boolean
   draft?: boolean
   duplicateFromID?: DataFromCollectionSlug<TSlug>['id']
+  /**
+   * Optional identifier field name to use for duplicate lookup instead of 'id'.
+   */
+  duplicateFromIdentifierField?: string
   overrideAccess?: boolean
   overwriteExistingFiles?: boolean
   populate?: PopulateType
@@ -97,6 +101,7 @@ export const createOperation = async <
       disableVerificationEmail,
       draft = false,
       duplicateFromID,
+      duplicateFromIdentifierField,
       overrideAccess,
       overwriteExistingFiles = false,
       populate,
@@ -125,6 +130,7 @@ export const createOperation = async <
         id: duplicateFromID,
         collectionConfig,
         draftArg: isSavingDraft,
+        identifierField: duplicateFromIdentifierField,
         overrideAccess,
         req,
         selectedLocales,

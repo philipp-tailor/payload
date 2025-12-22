@@ -32,15 +32,20 @@ export const getRequestCollectionWithID = <T extends boolean>(
 ): {
   collection: Collection
   id: T extends true ? string : number | string
+  identifierField: string
 } => {
   const collection = getRequestCollection(req)
   const id = req.routeParams?.id
+
+  // Get the identifier field from collection config
+  const identifierField = collection.admin?.useAsUrlIdentifier ?? 'id'
 
   if (typeof id !== 'string') {
     if (optionalID) {
       return {
         id: undefined!,
         collection,
+        identifierField,
       }
     }
 
@@ -51,28 +56,34 @@ export const getRequestCollectionWithID = <T extends boolean>(
     return {
       id,
       collection,
+      identifierField,
     }
   }
 
   let sanitizedID: number | string = id
 
-  // If default db ID type is a number, we should sanitize
-  let shouldSanitize = Boolean(req.payload.db.defaultIDType === 'number')
+  // Only sanitize if using the default 'id' field
+  // Custom identifier fields are used as-is (already validated during config)
+  if (identifierField === 'id') {
+    // If default db ID type is a number, we should sanitize
+    let shouldSanitize = Boolean(req.payload.db.defaultIDType === 'number')
 
-  // UNLESS the customIDType for this collection is text.... then we leave it
-  if (shouldSanitize && collection.customIDType === 'text') {
-    shouldSanitize = false
-  }
+    // UNLESS the customIDType for this collection is text.... then we leave it
+    if (shouldSanitize && collection.customIDType === 'text') {
+      shouldSanitize = false
+    }
 
-  // If we still should sanitize, parse float
-  if (shouldSanitize) {
-    sanitizedID = parseFloat(sanitizedID)
+    // If we still should sanitize, parse float
+    if (shouldSanitize) {
+      sanitizedID = parseFloat(sanitizedID)
+    }
   }
 
   return {
     // @ts-expect-error generic return
     id: sanitizedID,
     collection,
+    identifierField,
   }
 }
 

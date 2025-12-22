@@ -9,7 +9,12 @@ import { type Arguments as CreateArguments, createOperation } from './create.js'
 export type Arguments<TSlug extends CollectionSlug> = {
   data?: DeepPartial<RequiredDataFromCollectionSlug<TSlug>>
   id: number | string
-} & Omit<CreateArguments<TSlug>, 'data' | 'duplicateFromID'>
+  /**
+   * Optional identifier field name to use for lookup instead of 'id'.
+   * When provided, the query will use this field for document lookup.
+   */
+  identifierField?: string
+} & Omit<CreateArguments<TSlug>, 'data' | 'duplicateFromID' | 'duplicateFromIdentifierField'>
 
 export const duplicateOperation = async <
   TSlug extends CollectionSlug,
@@ -17,10 +22,11 @@ export const duplicateOperation = async <
 >(
   incomingArgs: Arguments<TSlug>,
 ): Promise<TransformCollectionWithSelect<TSlug, TSelect>> => {
-  const { id, ...args } = incomingArgs
+  const { id, identifierField, ...args } = incomingArgs
   return createOperation({
     ...args,
     data: incomingArgs?.data || {},
     duplicateFromID: id,
+    duplicateFromIdentifierField: identifierField,
   })
 }

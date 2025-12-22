@@ -24,6 +24,7 @@ export const defaults: Partial<CollectionConfig> = {
       limits: [5, 10, 25, 50, 100],
     },
     useAsTitle: 'id',
+    useAsUrlIdentifier: 'id',
   },
   auth: false,
   custom: {},
@@ -70,6 +71,7 @@ export const addDefaultsToCollectionConfig = (collection: CollectionConfig): Col
     enableRichTextLink: true,
     enableRichTextRelationship: true,
     useAsTitle: 'id',
+    useAsUrlIdentifier: 'id',
     ...(collection.admin || {}),
     pagination: {
       defaultLimit: 10,

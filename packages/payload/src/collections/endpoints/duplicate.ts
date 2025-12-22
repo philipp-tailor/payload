@@ -9,7 +9,7 @@ import { parseParams } from '../../utilities/parseParams/index.js'
 import { duplicateOperation } from '../operations/duplicate.js'
 
 export const duplicateHandler: PayloadHandler = async (req) => {
-  const { id, collection } = getRequestCollectionWithID(req)
+  const { id, collection, identifierField } = getRequestCollectionWithID(req)
 
   const { depth, draft, populate, select, selectedLocales } = parseParams(req.query)
 
@@ -19,6 +19,7 @@ export const duplicateHandler: PayloadHandler = async (req) => {
     data: req.data,
     depth,
     draft,
+    identifierField,
     populate,
     req,
     select,

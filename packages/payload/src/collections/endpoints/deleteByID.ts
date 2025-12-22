@@ -8,7 +8,7 @@ import { parseParams } from '../../utilities/parseParams/index.js'
 import { deleteByIDOperation } from '../operations/deleteByID.js'
 
 export const deleteByIDHandler: PayloadHandler = async (req) => {
-  const { id, collection } = getRequestCollectionWithID(req)
+  const { id, collection, identifierField } = getRequestCollectionWithID(req)
 
   const { depth, overrideLock, populate, select, trash } = parseParams(req.query)
 
@@ -16,6 +16,7 @@ export const deleteByIDHandler: PayloadHandler = async (req) => {
     id,
     collection,
     depth,
+    identifierField,
     overrideLock: overrideLock ?? false,
     populate,
     req,
