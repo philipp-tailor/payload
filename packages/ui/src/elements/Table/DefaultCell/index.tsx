@@ -68,10 +68,12 @@ export const DefaultCell: React.FC<DefaultCellComponentProps> = (props) => {
     if (linkURL) {
       wrapElementProps.href = linkURL
     } else {
+      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier ?? 'id'
+      const identifierValue = rowData[identifierField] ?? rowData.id
       wrapElementProps.href = collectionConfig?.slug
         ? formatAdminURL({
             adminRoute,
-            path: `/collections/${collectionConfig?.slug}${viewType === 'trash' ? '/trash' : ''}/${encodeURIComponent(rowData.id)}`,
+            path: `/collections/${collectionConfig?.slug}${viewType === 'trash' ? '/trash' : ''}/${encodeURIComponent(identifierValue)}`,
           })
         : ''
     }

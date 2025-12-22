@@ -37,20 +37,49 @@ export const getDocumentData = async ({
 
   try {
     if (collectionSlug && id) {
-      resolvedData = await payload.findByID({
-        id,
-        collection: collectionSlug,
-        depth: 0,
-        draft: true,
-        fallbackLocale: false,
-        locale: locale?.code,
-        overrideAccess: false,
-        req: {
-          ...rest,
-        },
-        trash: isTrashedDoc ? true : false,
-        user,
-      })
+      const collectionConfig = payload.collections[collectionSlug]?.config
+      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier ?? 'id'
+
+      if (identifierField === 'id') {
+        // Use standard findByID when using default 'id' field
+        resolvedData = await payload.findByID({
+          id,
+          collection: collectionSlug,
+          depth: 0,
+          draft: true,
+          fallbackLocale: false,
+          locale: locale?.code,
+          overrideAccess: false,
+          req: {
+            ...rest,
+          },
+          trash: isTrashedDoc ? true : false,
+          user,
+        })
+      } else {
+        // Use find with where clause for custom identifier fields
+        const result = await payload.find({
+          collection: collectionSlug,
+          depth: 0,
+          draft: true,
+          fallbackLocale: false,
+          limit: 1,
+          locale: locale?.code,
+          overrideAccess: false,
+          req: {
+            ...rest,
+          },
+          trash: isTrashedDoc ? true : false,
+          user,
+          where: {
+            [identifierField]: {
+              equals: id,
+            },
+          },
+        })
+
+        resolvedData = result.docs[0] || null
+      }
     }
 
     if (globalSlug) {

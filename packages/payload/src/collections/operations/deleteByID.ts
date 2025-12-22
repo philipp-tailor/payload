@@ -31,6 +31,11 @@ export type Arguments = {
   depth?: number
   disableTransaction?: boolean
   id: number | string
+  /**
+   * Optional identifier field name to use for lookup instead of 'id'.
+   * When provided, the query will use this field for document lookup.
+   */
+  identifierField?: string
   overrideAccess?: boolean
   overrideLock?: boolean
   populate?: PopulateType
@@ -62,6 +67,7 @@ export const deleteByIDOperation = async <TSlug extends CollectionSlug, TSelect 
       id,
       collection: { config: collectionConfig },
       depth,
+      identifierField = 'id',
       overrideAccess,
       overrideLock,
       populate,
@@ -105,7 +111,7 @@ export const deleteByIDOperation = async <TSlug extends CollectionSlug, TSelect 
     // Retrieve document
     // /////////////////////////////////////
 
-    let where = combineQueries({ id: { equals: id } }, accessResults)
+    let where = combineQueries({ [identifierField]: { equals: id } }, accessResults)
 
     // Exclude trashed documents when trash: false
     where = appendNonTrashedFilter({

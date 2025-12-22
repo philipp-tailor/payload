@@ -17,6 +17,10 @@ type GetDuplicateDocumentArgs = {
   collectionConfig: SanitizedCollectionConfig
   draftArg?: boolean
   id: number | string
+  /**
+   * Optional identifier field name to use for lookup instead of 'id'.
+   */
+  identifierField?: string
   overrideAccess?: boolean
   req: PayloadRequest
   selectedLocales?: string[]
@@ -25,6 +29,7 @@ export const getDuplicateDocumentData = async ({
   id,
   collectionConfig,
   draftArg,
+  identifierField = 'id',
   overrideAccess,
   req,
   selectedLocales,
@@ -49,7 +54,7 @@ export const getDuplicateDocumentData = async ({
     collection: collectionConfig.slug,
     locale: req.locale!,
     req,
-    where: combineQueries({ id: { equals: id } }, accessResults),
+    where: combineQueries({ [identifierField]: { equals: id } }, accessResults),
   }
 
   let duplicatedFromDocWithLocales = await getLatestCollectionVersion({
