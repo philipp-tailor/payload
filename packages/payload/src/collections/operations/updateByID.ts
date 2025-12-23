@@ -90,7 +90,7 @@ export const updateByIDOperation = async <
       collection,
       depth,
       draft: draftArg = false,
-      identifierField = 'id',
+      identifierField,
       overrideAccess,
       overrideLock,
       overwriteExistingFiles = false,

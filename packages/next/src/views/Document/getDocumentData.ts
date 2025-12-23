@@ -38,7 +38,7 @@ export const getDocumentData = async ({
   try {
     if (collectionSlug && id) {
       const collectionConfig = payload.collections[collectionSlug]?.config
-      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier ?? 'id'
+      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier
 
       if (identifierField === 'id') {
         // Use standard findByID when using default 'id' field

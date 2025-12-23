@@ -68,7 +68,7 @@ export const DefaultCell: React.FC<DefaultCellComponentProps> = (props) => {
     if (linkURL) {
       wrapElementProps.href = linkURL
     } else {
-      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier ?? 'id'
+      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier
       const identifierValue = rowData[identifierField] ?? rowData.id
       wrapElementProps.href = collectionConfig?.slug
         ? formatAdminURL({

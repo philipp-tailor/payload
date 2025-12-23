@@ -86,7 +86,7 @@ export const findByIDOperation = async <
       disableErrors,
       draft: replaceWithVersion = false,
       flattenLocales,
-      identifierField = 'id',
+      identifierField,
       includeLockStatus,
       joins,
       overrideAccess = false,

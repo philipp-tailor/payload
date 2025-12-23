@@ -77,7 +77,7 @@ export function renderCell({
     if (typeof formatDocURL === 'function') {
       // Generate the default URL that would normally be used
       const adminRoute = req.payload.config.routes?.admin || '/admin'
-      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier ?? 'id'
+      const identifierField = collectionConfig?.admin?.useAsUrlIdentifier
       const identifierValue = doc[identifierField] ?? doc.id
       const defaultURL = formatAdminURL({
         adminRoute,
