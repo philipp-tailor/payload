@@ -18,7 +18,7 @@ describe('Custom URL Identifier', () => {
     }
   })
 
-  describe('REST API', () => {
+  describe('Admin UI Document Lookup', () => {
     let pageId: number | string
     const pageSlug = 'hello-world'
 
@@ -35,10 +35,27 @@ describe('Custom URL Identifier', () => {
       pageId = page.id
     })
 
-    it('should find document by custom identifier (slug)', async () => {
+    it('should find document by custom identifier using find operation', async () => {
+      // Admin UI uses find with where clause for custom identifiers
+      const result = await payload.find({
+        collection: 'pages',
+        where: {
+          slug: { equals: pageSlug },
+        },
+        limit: 1,
+      })
+
+      expect(result.docs).toHaveLength(1)
+      expect(result.docs[0].id).toBe(pageId)
+      expect(result.docs[0].slug).toBe(pageSlug)
+      expect(result.docs[0].title).toBe('Hello World')
+    })
+
+    it('should still find document by real ID using findByID', async () => {
+      // REST API operations always use real ID
       const doc = await payload.findByID({
         collection: 'pages',
-        id: pageSlug,
+        id: pageId,
       })
 
       expect(doc).toBeDefined()
@@ -47,19 +64,11 @@ describe('Custom URL Identifier', () => {
       expect(doc.title).toBe('Hello World')
     })
 
-    it('should not find document by numeric ID when using custom identifier', async () => {
-      await expect(
-        payload.findByID({
-          collection: 'pages',
-          id: pageId,
-        }),
-      ).rejects.toThrow()
-    })
-
-    it('should update document by custom identifier (slug)', async () => {
+    it('should update document using real ID', async () => {
+      // All REST API operations use real ID, not custom identifier
       const updated = await payload.update({
         collection: 'pages',
-        id: pageSlug,
+        id: pageId,
         data: {
           content: 'Updated content',
         },
@@ -71,7 +80,7 @@ describe('Custom URL Identifier', () => {
       expect(updated.content).toBe('Updated content')
     })
 
-    it('should delete document by custom identifier (slug)', async () => {
+    it('should delete document using real ID', async () => {
       // Create a new page to delete
       const newPage = await payload.create({
         collection: 'pages',
@@ -82,9 +91,10 @@ describe('Custom URL Identifier', () => {
         },
       })
 
+      // Delete using real ID
       const deleted = await payload.delete({
         collection: 'pages',
-        id: 'to-delete',
+        id: newPage.id,
       })
 
       expect(deleted).toBeDefined()
@@ -95,15 +105,16 @@ describe('Custom URL Identifier', () => {
       await expect(
         payload.findByID({
           collection: 'pages',
-          id: 'to-delete',
+          id: newPage.id,
         }),
       ).rejects.toThrow()
     })
 
-    it('should duplicate document by custom identifier (slug)', async () => {
+    it('should duplicate document using real ID', async () => {
+      // Duplicate using real ID
       const duplicated = await payload.duplicate({
         collection: 'pages',
-        id: pageSlug,
+        id: pageId,
         data: {
           slug: 'hello-world-copy',
         },
@@ -116,7 +127,7 @@ describe('Custom URL Identifier', () => {
       expect(duplicated.content).toBe('Updated content') // From previous update test
     })
 
-    it('should handle URL-encoded identifiers', async () => {
+    it('should handle special characters when finding by custom identifier', async () => {
       // Create a page with special characters in slug
       const page = await payload.create({
         collection: 'pages',
@@ -127,24 +138,30 @@ describe('Custom URL Identifier', () => {
         },
       })
 
-      // Should be able to find with the exact slug value
-      const found = await payload.findByID({
+      // Admin UI uses find with where clause
+      const result = await payload.find({
         collection: 'pages',
-        id: 'hello world',
+        where: {
+          slug: { equals: 'hello world' },
+        },
+        limit: 1,
       })
 
-      expect(found).toBeDefined()
-      expect(found.id).toBe(page.id)
-      expect(found.slug).toBe('hello world')
+      expect(result.docs).toHaveLength(1)
+      expect(result.docs[0].id).toBe(page.id)
+      expect(result.docs[0].slug).toBe('hello world')
     })
 
-    it('should return 404 for non-existent custom identifier', async () => {
-      await expect(
-        payload.findByID({
-          collection: 'pages',
-          id: 'non-existent-slug',
-        }),
-      ).rejects.toThrow()
+    it('should return empty result for non-existent custom identifier', async () => {
+      const result = await payload.find({
+        collection: 'pages',
+        where: {
+          slug: { equals: 'non-existent-slug' },
+        },
+        limit: 1,
+      })
+
+      expect(result.docs).toHaveLength(0)
     })
   })
 

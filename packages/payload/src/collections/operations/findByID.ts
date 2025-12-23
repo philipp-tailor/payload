@@ -43,11 +43,6 @@ export type FindByIDArgs = {
   disableErrors?: boolean
   draft?: boolean
   id: number | string
-  /**
-   * Optional identifier field name to use for lookup instead of 'id'.
-   * When provided, the query will use this field for document lookup.
-   */
-  identifierField?: string
   includeLockStatus?: boolean
   joins?: JoinQuery
   overrideAccess?: boolean
@@ -86,7 +81,6 @@ export const findByIDOperation = async <
       disableErrors,
       draft: replaceWithVersion = false,
       flattenLocales,
-      identifierField,
       includeLockStatus,
       joins,
       overrideAccess = false,
@@ -117,7 +111,7 @@ export const findByIDOperation = async <
       return null!
     }
 
-    const where = { [identifierField]: { equals: id } }
+    const where = { id: { equals: id } }
 
     let fullWhere = combineQueries(where, accessResult)
 
@@ -167,7 +161,7 @@ export const findByIDOperation = async <
       where: fullWhere,
     }
 
-    if (!findOneArgs.where?.and?.[0]?.[identifierField]) {
+    if (!findOneArgs.where?.and?.[0]?.id) {
       throw new NotFound(t)
     }
 

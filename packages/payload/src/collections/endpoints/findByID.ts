@@ -9,7 +9,7 @@ import { findByIDOperation } from '../operations/findByID.js'
 
 export const findByIDHandler: PayloadHandler = async (req) => {
   const { data: dataArg } = req
-  const { id, collection, identifierField } = getRequestCollectionWithID(req)
+  const { id, collection } = getRequestCollectionWithID(req)
 
   const { data, depth, draft, flattenLocales, joins, populate, select, trash } = parseParams({
     ...req.query,
@@ -23,7 +23,6 @@ export const findByIDHandler: PayloadHandler = async (req) => {
     depth,
     draft,
     flattenLocales,
-    identifierField,
     joins,
     populate,
     req,
