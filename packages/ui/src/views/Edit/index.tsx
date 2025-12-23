@@ -373,6 +373,21 @@ export function DefaultEditView({
           setPreviewURL(previewURL)
         }
 
+        // Update URL if custom identifier field changed
+        if (collectionSlug && collectionConfig) {
+          const identifierField = collectionConfig.admin?.useAsUrlIdentifier
+          if (identifierField && identifierField !== 'id' && id) {
+            const newIdentifierValue = document[identifierField]
+            if (newIdentifierValue && String(newIdentifierValue) !== String(id)) {
+              const newURL = formatAdminURL({
+                adminRoute,
+                path: `/collections/${collectionSlug}/${encodeURIComponent(String(newIdentifierValue))}${locale ? `?locale=${locale}` : ''}`,
+              })
+              startRouteTransition(() => router.replace(newURL))
+            }
+          }
+        }
+
         reportUpdate({
           id,
           doc: document,
