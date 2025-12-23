@@ -122,35 +122,101 @@ export const MyCollection: CollectionConfig = {
 
 The following options are available:
 
-| Option                       | Description                                                                                                                                                                                                                  |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `group`                      | Text or localization object used to group Collection and Global links in the admin navigation. Set to `false` to hide the link from the navigation while keeping its routes accessible.                                      |
-| `hidden`                     | Set to true or a function, called with the current user, returning true to exclude this Collection from navigation and admin routing.                                                                                        |
-| `hooks`                      | Admin-specific hooks for this Collection. [More details](../hooks/collections).                                                                                                                                              |
-| `useAsTitle`                 | Specify a top-level field to use for a document title throughout the Admin Panel. If no field is defined, the ID of the document is used as the title.                                                                       |
-| `description`                | Text to display below the Collection label in the List View to give editors more information. Alternatively, you can use the `admin.components.Description` to render a React component. [More details](#custom-components). |
-| `defaultColumns`             | Array of field names that correspond to which columns to show by default in this Collection's List View.                                                                                                                     |
-| `disableCopyToLocale`        | Disables the "Copy to Locale" button while editing documents within this Collection. Only applicable when localization is enabled.                                                                                           |
-| `groupBy`                    | Beta. Enable grouping by a field in the list view.                                                                                                                                                                           |
-| `hideAPIURL`                 | Hides the "API URL" meta field while editing documents within this Collection.                                                                                                                                               |
-| `enableRichTextLink`         | The [Rich Text](../fields/rich-text) field features a `Link` element which allows for users to automatically reference related documents within their rich text. Set to `true` by default.                                   |
-| `enableRichTextRelationship` | The [Rich Text](../fields/rich-text) field features a `Relationship` element which allows for users to automatically reference related documents within their rich text. Set to `true` by default.                           |
-| `folders`                    | A boolean to enable folders for a given collection. Defaults to `false`. [More details](../folders/overview).                                                                                                                |
-| `formatDocURL`               | Function to customize document links in the List View. Return `null` to disable linking, or a string for custom URLs. [More details](#format-document-urls).                                                                 |
-| `meta`                       | Page metadata overrides to apply to this Collection within the Admin Panel. [More details](../admin/metadata).                                                                                                               |
-| `preview`                    | Function to generate preview URLs within the Admin Panel that can point to your app. [More details](../admin/preview).                                                                                                       |
-| `livePreview`                | Enable real-time editing for instant visual feedback of your front-end application. [More details](../live-preview/overview).                                                                                                |
-| `components`                 | Swap in your own React components to be used within this Collection. [More details](#custom-components).                                                                                                                     |
-| `listSearchableFields`       | Specify which fields should be searched in the List search view. [More details](#list-searchable-fields).                                                                                                                    |
-| `enableListViewSelectAPI`    | Performance opt-in. When `true`, uses the Select API in the List View to query only the active columns as opposed to entire documents. [More details](#enable-list-view-select-api).                                         |
-| `pagination`                 | Set pagination-specific options for this Collection in the List View. [More details](#pagination).                                                                                                                           |
-| `baseFilter`                 | Defines a default base filter which will be applied to the List View (along with any other filters applied by the user) and internal links in Lexical Editor,                                                                |
+| Option                       | Description                                                                                                                                                                                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `group`                      | Text or localization object used to group Collection and Global links in the admin navigation. Set to `false` to hide the link from the navigation while keeping its routes accessible.                                                           |
+| `hidden`                     | Set to true or a function, called with the current user, returning true to exclude this Collection from navigation and admin routing.                                                                                                             |
+| `hooks`                      | Admin-specific hooks for this Collection. [More details](../hooks/collections).                                                                                                                                                                   |
+| `useAsTitle`                 | Specify a top-level field to use for a document title throughout the Admin Panel. If no field is defined, the ID of the document is used as the title.                                                                                            |
+| `useAsUrlIdentifier`         | Specify a unique field (e.g., `slug`) to use in Admin Panel URLs instead of the document ID. The field must be `unique`, of type `text` or `number`, and not virtual or a relationship. Defaults to `id`. [More details](#use-as-url-identifier). |
+| `description`                | Text to display below the Collection label in the List View to give editors more information. Alternatively, you can use the `admin.components.Description` to render a React component. [More details](#custom-components).                      |
+| `defaultColumns`             | Array of field names that correspond to which columns to show by default in this Collection's List View.                                                                                                                                          |
+| `disableCopyToLocale`        | Disables the "Copy to Locale" button while editing documents within this Collection. Only applicable when localization is enabled.                                                                                                                |
+| `groupBy`                    | Beta. Enable grouping by a field in the list view.                                                                                                                                                                                                |
+| `hideAPIURL`                 | Hides the "API URL" meta field while editing documents within this Collection.                                                                                                                                                                    |
+| `enableRichTextLink`         | The [Rich Text](../fields/rich-text) field features a `Link` element which allows for users to automatically reference related documents within their rich text. Set to `true` by default.                                                        |
+| `enableRichTextRelationship` | The [Rich Text](../fields/rich-text) field features a `Relationship` element which allows for users to automatically reference related documents within their rich text. Set to `true` by default.                                                |
+| `folders`                    | A boolean to enable folders for a given collection. Defaults to `false`. [More details](../folders/overview).                                                                                                                                     |
+| `formatDocURL`               | Function to customize document links in the List View. Return `null` to disable linking, or a string for custom URLs. [More details](#format-document-urls).                                                                                      |
+| `meta`                       | Page metadata overrides to apply to this Collection within the Admin Panel. [More details](../admin/metadata).                                                                                                                                    |
+| `preview`                    | Function to generate preview URLs within the Admin Panel that can point to your app. [More details](../admin/preview).                                                                                                                            |
+| `livePreview`                | Enable real-time editing for instant visual feedback of your front-end application. [More details](../live-preview/overview).                                                                                                                     |
+| `components`                 | Swap in your own React components to be used within this Collection. [More details](#custom-components).                                                                                                                                          |
+| `listSearchableFields`       | Specify which fields should be searched in the List search view. [More details](#list-searchable-fields).                                                                                                                                         |
+| `enableListViewSelectAPI`    | Performance opt-in. When `true`, uses the Select API in the List View to query only the active columns as opposed to entire documents. [More details](#enable-list-view-select-api).                                                              |
+| `pagination`                 | Set pagination-specific options for this Collection in the List View. [More details](#pagination).                                                                                                                                                |
+| `baseFilter`                 | Defines a default base filter which will be applied to the List View (along with any other filters applied by the user) and internal links in Lexical Editor,                                                                                     |
 
 <Banner type="warning">
   **Note:** If you set `useAsTitle` to a relationship or join field, it will use
   only the ID of the related document(s) as the title. To display a specific
   field (i.e. title) from the related document instead, create a virtual field
   that extracts the desired data, and set `useAsTitle` to that virtual field.
+</Banner>
+
+### Use As URL Identifier
+
+By default, Payload uses the document's `id` field in Admin Panel URLs (e.g., `/admin/collections/pages/123`). The `useAsUrlIdentifier` option allows you to use a different field, such as a `slug`, to create more user-friendly URLs (e.g., `/admin/collections/pages/hello-world`).
+
+```ts
+import type { CollectionConfig } from 'payload'
+
+export const Pages: CollectionConfig = {
+  slug: 'pages',
+  admin: {
+    useAsTitle: 'title',
+    // highlight-start
+    useAsUrlIdentifier: 'slug',
+    // highlight-end
+  },
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'slug',
+      type: 'text',
+      unique: true, // Required
+      required: true,
+    },
+    // ... other fields
+  ],
+}
+```
+
+**Field Requirements:**
+
+The field specified in `useAsUrlIdentifier` must meet the following criteria:
+
+- **Unique**: Must have `unique: true` to ensure no URL conflicts
+- **Type**: Must be `text` or `number` type
+- **Not virtual**: Cannot be a virtual field
+- **Not a relationship**: Cannot be a relationship or upload field
+- **Top-level**: Cannot be a nested field path
+
+**Behavior:**
+
+- **Admin Panel Only**: This setting only affects Admin Panel URLs. REST API endpoints always use the document's `id` field.
+- **Automatic URL Updates**: If you change the identifier field value (e.g., update the slug), the Admin Panel URL will automatically update after save.
+- **Special Characters**: URLs are automatically encoded, so identifiers with spaces or special characters work correctly.
+- **Performance**: Consider adding `index: true` to the identifier field for better query performance.
+
+**Example URL Structure:**
+
+```
+# With default 'id'
+/admin/collections/pages/123
+
+# With useAsUrlIdentifier: 'slug'
+/admin/collections/pages/hello-world
+```
+
+<Banner type="success">
+  **Tip:** This feature is ideal for Collections where editors work with
+  human-readable identifiers like slugs, SKUs, or usernames. It makes the Admin
+  Panel more intuitive while keeping the REST API unchanged.
 </Banner>
 
 ### Custom Components
