@@ -44,17 +44,10 @@ export const validateUseAsUrlIdentifier = (config: CollectionConfig) => {
     )
   }
 
-  // Check field type is text or number
+  // Check field type is text or number (also excludes relationship and upload types)
   if (identifierField.type !== 'text' && identifierField.type !== 'number') {
     throw new InvalidConfiguration(
       `The field "${identifierFieldName}" specified in "admin.useAsUrlIdentifier" in the collection "${config.slug}" must be of type "text" or "number". Found type "${identifierField.type}".`,
-    )
-  }
-
-  // Check field is not a relationship
-  if (identifierField.type === 'relationship' || identifierField.type === 'upload') {
-    throw new InvalidConfiguration(
-      `The field "${identifierFieldName}" specified in "admin.useAsUrlIdentifier" in the collection "${config.slug}" cannot be a relationship field.`,
     )
   }
 
