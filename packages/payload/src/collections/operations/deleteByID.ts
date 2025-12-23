@@ -67,7 +67,7 @@ export const deleteByIDOperation = async <TSlug extends CollectionSlug, TSelect 
       id,
       collection: { config: collectionConfig },
       depth,
-      identifierField = 'id',
+      identifierField,
       overrideAccess,
       overrideLock,
       populate,

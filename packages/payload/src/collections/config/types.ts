@@ -485,6 +485,13 @@ export type CollectionAdminOptions = {
   useAsUrlIdentifier?: string
 }
 
+/**
+ * Sanitized version of CollectionAdminOptions where useAsUrlIdentifier is guaranteed to be defined
+ */
+export type SanitizedCollectionAdminOptions = CollectionAdminOptions & {
+  useAsUrlIdentifier: string
+}
+
 /** Manage all aspects of a data collection */
 export type CollectionConfig<TSlug extends CollectionSlug = any> = {
   /**
@@ -712,7 +719,7 @@ export interface SanitizedCollectionConfig
     DeepRequired<CollectionConfig>,
     'admin' | 'auth' | 'endpoints' | 'fields' | 'folders' | 'slug' | 'upload' | 'versions'
   > {
-  admin: CollectionAdminOptions
+  admin: SanitizedCollectionAdminOptions
   auth: Auth
   endpoints: Endpoint[] | false
   fields: Field[]

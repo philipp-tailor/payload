@@ -29,7 +29,7 @@ export const getDuplicateDocumentData = async ({
   id,
   collectionConfig,
   draftArg,
-  identifierField = 'id',
+  identifierField,
   overrideAccess,
   req,
   selectedLocales,

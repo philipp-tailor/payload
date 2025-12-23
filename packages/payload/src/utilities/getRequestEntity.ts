@@ -37,8 +37,8 @@ export const getRequestCollectionWithID = <T extends boolean>(
   const collection = getRequestCollection(req)
   const id = req.routeParams?.id
 
-  // Get the identifier field from collection config
-  const identifierField = collection.admin?.useAsUrlIdentifier ?? 'id'
+  // Get the identifier field from collection config (guaranteed to be defined after sanitization)
+  const identifierField = collection.config.admin.useAsUrlIdentifier
 
   if (typeof id !== 'string') {
     if (optionalID) {
