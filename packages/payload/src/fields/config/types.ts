@@ -1184,6 +1184,10 @@ type SharedRelationshipProperties = {
    * {@link https://payloadcms.com/docs/getting-started/concepts#field-level-max-depth}
    */
   maxDepth?: number
+  /**
+   * Configure which fields to include or exclude when populating this relationship field.
+   * Supports both include and exclude modes.
+   */
   populate?: SelectType
   type: 'relationship'
 } & (
