@@ -1,7 +1,9 @@
 import type { CollectionConfig } from 'payload'
 
+import { relationWithPopulateSlug } from '../../slugs.js'
+
 export const RelationWithPopulate: CollectionConfig = {
-  slug: 'relation-with-populate',
+  slug: relationWithPopulateSlug,
   fields: [
     {
       name: 'title',
