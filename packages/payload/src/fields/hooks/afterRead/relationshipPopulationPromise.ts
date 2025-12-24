@@ -75,7 +75,7 @@ const populate = async ({
 
     if (shouldPopulate) {
       const fieldLevelPopulate =
-        field.type !== 'join' && 'populate' in field ? field.populate : undefined
+        field.type === 'relationship' && 'populate' in field ? field.populate : undefined
 
       relationshipValue = await req.payloadDataLoader.load(
         createDataloaderCacheKey({
