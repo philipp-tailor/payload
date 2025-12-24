@@ -145,6 +145,7 @@ import type {
   Operation,
   PayloadRequest,
   PickPreserveOptional,
+  SelectType,
   Where,
 } from '../../types/index.js'
 import type {
@@ -1183,6 +1184,7 @@ type SharedRelationshipProperties = {
    * {@link https://payloadcms.com/docs/getting-started/concepts#field-level-max-depth}
    */
   maxDepth?: number
+  populate?: SelectType
   type: 'relationship'
 } & (
   | {
