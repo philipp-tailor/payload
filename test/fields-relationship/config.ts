@@ -13,6 +13,7 @@ import { Podcast } from './collections/Podcast/index.js'
 import { Relation1 } from './collections/Relation1/index.js'
 import { Relation2 } from './collections/Relation2/index.js'
 import { Relationship } from './collections/Relationship/index.js'
+import { RelationWithPopulate } from './collections/RelationWithPopulate/index.js'
 import { RelationWithTitle } from './collections/RelationWithTitle/index.js'
 import { Restricted } from './collections/Restricted/index.js'
 import { RelationshipUpdatedExternally } from './collections/UpdatedExternally/index.js'
@@ -34,6 +35,7 @@ export default buildConfigWithDefaults({
     Relation2,
     Restricted,
     RelationWithTitle,
+    RelationWithPopulate,
     RelationshipUpdatedExternally,
     Collection1,
     Collection2,
