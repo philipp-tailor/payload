@@ -74,6 +74,9 @@ const populate = async ({
     }
 
     if (shouldPopulate) {
+      const fieldLevelPopulate =
+        field.type !== 'join' && 'populate' in field ? field.populate : undefined
+
       relationshipValue = await req.payloadDataLoader.load(
         createDataloaderCacheKey({
           collectionSlug: relatedCollection.config.slug,
@@ -87,6 +90,7 @@ const populate = async ({
           populate: populateArg,
           select:
             populateArg?.[relatedCollection.config.slug] ??
+            fieldLevelPopulate ??
             relatedCollection.config.defaultPopulate,
           showHiddenFields,
           transactionID: req.transactionID!,
