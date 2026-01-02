@@ -32,6 +32,7 @@ export const RelationWithPopulate: CollectionConfig = {
     {
       name: 'relationPolymorphic',
       type: 'relationship',
+      hasMany: true,
       populate: {
         title: true,
       },
