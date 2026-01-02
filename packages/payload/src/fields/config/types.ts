@@ -145,6 +145,7 @@ import type {
   Operation,
   PayloadRequest,
   PickPreserveOptional,
+  SelectType,
   Where,
 } from '../../types/index.js'
 import type {
@@ -1183,6 +1184,13 @@ type SharedRelationshipProperties = {
    * {@link https://payloadcms.com/docs/getting-started/concepts#field-level-max-depth}
    */
   maxDepth?: number
+  /**
+   * Configure which fields to include or exclude when populating this relationship field.
+   * Overrides the collection's defaultPopulate. Can be overridden by query-level populate.
+   *
+   * @see {@link https://payloadcms.com/docs/fields/relationship#field-level-populate}
+   */
+  populate?: SelectType
   type: 'relationship'
 } & (
   | {

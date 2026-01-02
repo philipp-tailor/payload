@@ -1,0 +1,42 @@
+import type { CollectionConfig } from 'payload'
+
+import { relationWithPopulateSlug } from '../../slugs.js'
+
+export const RelationWithPopulate: CollectionConfig = {
+  slug: relationWithPopulateSlug,
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'description',
+      type: 'text',
+    },
+    {
+      name: 'relationDefault',
+      type: 'relationship',
+      relationTo: 'relation-one',
+      // No populate - should use collection defaultPopulate
+    },
+    {
+      name: 'relationWithPopulate',
+      type: 'relationship',
+      populate: {
+        number: true,
+        title: true,
+      },
+      relationTo: 'relation-one',
+    },
+    {
+      name: 'relationPolymorphic',
+      type: 'relationship',
+      hasMany: true,
+      populate: {
+        title: true,
+      },
+      relationTo: ['relation-one', 'relation-two'],
+    },
+  ],
+}

@@ -74,6 +74,7 @@ export interface Config {
     'relation-two': RelationTwo;
     'relation-restricted': RelationRestricted;
     'relation-with-title': RelationWithTitle;
+    'relation-with-populate': RelationWithPopulate;
     'relation-updated-externally': RelationUpdatedExternally;
     'collection-1': Collection1;
     'collection-2': Collection2;
@@ -96,6 +97,7 @@ export interface Config {
     'relation-two': RelationTwoSelect<false> | RelationTwoSelect<true>;
     'relation-restricted': RelationRestrictedSelect<false> | RelationRestrictedSelect<true>;
     'relation-with-title': RelationWithTitleSelect<false> | RelationWithTitleSelect<true>;
+    'relation-with-populate': RelationWithPopulateSelect<false> | RelationWithPopulateSelect<true>;
     'relation-updated-externally': RelationUpdatedExternallySelect<false> | RelationUpdatedExternallySelect<true>;
     'collection-1': Collection1Select<false> | Collection1Select<true>;
     'collection-2': Collection2Select<false> | Collection2Select<true>;
@@ -228,6 +230,8 @@ export interface FieldsRelationship {
 export interface RelationOne {
   id: string;
   name?: string | null;
+  title?: string | null;
+  number?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -238,6 +242,8 @@ export interface RelationOne {
 export interface RelationTwo {
   id: string;
   name?: string | null;
+  title?: string | null;
+  number?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -248,6 +254,8 @@ export interface RelationTwo {
 export interface RelationRestricted {
   id: string;
   name?: string | null;
+  title?: string | null;
+  number?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -258,6 +266,8 @@ export interface RelationRestricted {
 export interface RelationWithTitle {
   id: string;
   name?: string | null;
+  title?: string | null;
+  number?: number | null;
   meta?: {
     title?: string | null;
   };
@@ -271,6 +281,8 @@ export interface RelationWithTitle {
 export interface RelationFilterFalse {
   id: string;
   name?: string | null;
+  title?: string | null;
+  number?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -281,6 +293,33 @@ export interface RelationFilterFalse {
 export interface RelationFilterTrue {
   id: string;
   name?: string | null;
+  title?: string | null;
+  number?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "relation-with-populate".
+ */
+export interface RelationWithPopulate {
+  id: string;
+  title: string;
+  description?: string | null;
+  relationDefault?: (string | null) | RelationOne;
+  relationWithPopulate?: (string | null) | RelationOne;
+  relationPolymorphic?:
+    | (
+        | {
+            relationTo: 'relation-one';
+            value: string | RelationOne;
+          }
+        | {
+            relationTo: 'relation-two';
+            value: string | RelationTwo;
+          }
+      )[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -462,6 +501,10 @@ export interface PayloadLockedDocument {
         value: string | RelationWithTitle;
       } | null)
     | ({
+        relationTo: 'relation-with-populate';
+        value: string | RelationWithPopulate;
+      } | null)
+    | ({
         relationTo: 'relation-updated-externally';
         value: string | RelationUpdatedExternally;
       } | null)
@@ -569,6 +612,8 @@ export interface FieldsRelationshipSelect<T extends boolean = true> {
  */
 export interface RelationFilterFalseSelect<T extends boolean = true> {
   name?: T;
+  title?: T;
+  number?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -578,6 +623,8 @@ export interface RelationFilterFalseSelect<T extends boolean = true> {
  */
 export interface RelationFilterTrueSelect<T extends boolean = true> {
   name?: T;
+  title?: T;
+  number?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -587,6 +634,8 @@ export interface RelationFilterTrueSelect<T extends boolean = true> {
  */
 export interface RelationOneSelect<T extends boolean = true> {
   name?: T;
+  title?: T;
+  number?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -596,6 +645,8 @@ export interface RelationOneSelect<T extends boolean = true> {
  */
 export interface RelationTwoSelect<T extends boolean = true> {
   name?: T;
+  title?: T;
+  number?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -605,6 +656,8 @@ export interface RelationTwoSelect<T extends boolean = true> {
  */
 export interface RelationRestrictedSelect<T extends boolean = true> {
   name?: T;
+  title?: T;
+  number?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -614,11 +667,26 @@ export interface RelationRestrictedSelect<T extends boolean = true> {
  */
 export interface RelationWithTitleSelect<T extends boolean = true> {
   name?: T;
+  title?: T;
+  number?: T;
   meta?:
     | T
     | {
         title?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "relation-with-populate_select".
+ */
+export interface RelationWithPopulateSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  relationDefault?: T;
+  relationWithPopulate?: T;
+  relationPolymorphic?: T;
   updatedAt?: T;
   createdAt?: T;
 }

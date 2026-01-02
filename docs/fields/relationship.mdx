@@ -42,6 +42,7 @@ export const MyRelationshipField: Field = {
 | **`name`** \*          | To be used as the property name when stored and retrieved from the database. [More details](/docs/fields/overview#field-names).                                                                       |
 | **`relationTo`** \*    | Provide one or many collection `slug`s to be able to assign relationships to.                                                                                                                         |
 | **`filterOptions`**    | A query to filter which options appear in the UI and validate against. [More details](#filtering-relationship-options).                                                                               |
+| **`populate`**         | Override the related collection's `defaultPopulate` to control which fields are included when this relationship is populated. [More details](#field-level-populate).                                  |
 | **`hasMany`**          | Boolean when, if set to `true`, allows this field to have many relations instead of only one.                                                                                                         |
 | **`minRows`**          | A number for the fewest allowed items during validation when a value is present. Used with `hasMany`.                                                                                                 |
 | **`maxRows`**          | A number for the most allowed items during validation when a value is present. Used with `hasMany`.                                                                                                   |
@@ -195,6 +196,109 @@ unless you call the default relationship field validation function imported from
 **payload/shared** in your validate function.
 
 </Banner>
+
+## Field-Level Populate
+
+By default, when Payload populates relationship fields, it uses the related collection's `defaultPopulate` configuration. You can override this on a per-field basis using the `populate` property.
+
+This is useful when:
+
+- You need specific fields for virtual field calculations
+- Different relationship fields need different data from the same collection
+- You want to optimize what's fetched for specific relationships
+
+### Basic Example
+
+<Code>
+```ts
+{
+  name: 'author',
+  type: 'relationship',
+  relationTo: 'users',
+  populate: {
+    name: true,
+    email: true,
+    avatar: true,
+  },
+}
+```
+</Code>
+
+When this relationship is populated (either in API responses or the admin UI picker), only the specified fields (`name`, `email`, `avatar`) will be included.
+
+### Populate Priority
+
+When populating relationships, Payload follows this priority hierarchy:
+
+1. **Query-level populate** (highest) - Explicit `populate` argument in queries
+2. **Field-level populate** (middle) - The `populate` config on the field
+3. **Collection defaultPopulate** (lowest) - The collection's default
+
+#### Example
+
+<Code>
+```ts
+// Collection config
+{
+  slug: 'users',
+  defaultPopulate: {
+    id: true,
+    name: true,
+  },
+}
+
+// Field config
+{
+name: 'author',
+type: 'relationship',
+relationTo: 'users',
+populate: {
+name: true,
+email: true,
+avatar: true,
+},
+}
+
+// Query with override
+await payload.find({
+collection: 'posts',
+populate: {
+users: {
+name: true,
+bio: true,
+},
+},
+})
+// Result: author will have { name, bio } (query-level wins)
+
+````
+</Code>
+
+### Polymorphic Relationships
+
+For polymorphic relationships (multiple `relationTo` collections), the same `populate` configuration applies to all collections:
+
+<Code>
+```ts
+{
+  name: 'relatedContent',
+  type: 'relationship',
+  relationTo: ['posts', 'pages'],
+  populate: {
+    title: true,
+    slug: true,
+  },
+  // Both posts AND pages will use this populate
+}
+````
+
+</Code>
+
+To use different selects per collection, use query-level populate instead.
+
+### TypeScript
+
+The `populate` property is typed as `SelectType`. See the [Select Query Documentation](/docs/queries/select) for details on the select syntax, including nested field selection.
 
 ## Bi-directional relationships
 
