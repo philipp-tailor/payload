@@ -1186,7 +1186,9 @@ type SharedRelationshipProperties = {
   maxDepth?: number
   /**
    * Configure which fields to include or exclude when populating this relationship field.
-   * Supports both include and exclude modes.
+   * Overrides the collection's defaultPopulate. Can be overridden by query-level populate.
+   *
+   * @see {@link https://payloadcms.com/docs/fields/relationship#field-level-populate}
    */
   populate?: SelectType
   type: 'relationship'

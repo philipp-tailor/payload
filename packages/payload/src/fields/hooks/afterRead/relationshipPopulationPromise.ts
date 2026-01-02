@@ -74,6 +74,9 @@ const populate = async ({
     }
 
     if (shouldPopulate) {
+      // Field-level populate is only supported for relationship fields.
+      // Upload fields use a simpler population model and don't require
+      // field-level configuration - they always populate the full upload document.
       const fieldLevelPopulate =
         field.type === 'relationship' && 'populate' in field ? field.populate : undefined
 
