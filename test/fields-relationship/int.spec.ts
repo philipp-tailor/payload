@@ -1,15 +1,20 @@
 import type { Payload } from 'payload'
-import { describe, beforeAll, afterAll, it, expect } from 'vitest'
 
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import type { NextRESTClient } from '../helpers/NextRESTClient.js'
 import type { Collection1 } from './payload-types.js'
 
 import { devUser } from '../credentials.js'
 import { initPayloadInt } from '../helpers/initPayloadInt.js'
-import { collection1Slug, versionedRelationshipFieldSlug } from './slugs.js'
+import {
+  collection1Slug,
+  relationOneSlug,
+  relationWithPopulateSlug,
+  versionedRelationshipFieldSlug,
+} from './slugs.js'
 
 let payload: Payload
 let restClient: NextRESTClient
@@ -100,6 +105,53 @@ describe('Relationship Fields', () => {
       expect((version2Data.version.relationshipField[0].value as Collection1).name).toEqual(
         relatedDocName,
       )
+    })
+  })
+
+  describe('Field-level populate', () => {
+    let docWithRelations: any
+    let relatedDocA: any
+
+    beforeAll(async () => {
+      // Create a related document
+      relatedDocA = await payload.create({
+        collection: relationOneSlug,
+        data: {
+          title: 'Related A Title',
+          number: 42,
+          name: 'Related A Name',
+        },
+      })
+
+      // Create document with relationships
+      docWithRelations = await payload.create({
+        collection: relationWithPopulateSlug,
+        data: {
+          title: 'Main Doc',
+          description: 'Test doc',
+          relationWithPopulate: relatedDocA.id,
+        },
+      })
+    })
+
+    it('should use field-level populate when configured', async () => {
+      const doc = await payload.findByID({
+        collection: relationWithPopulateSlug,
+        id: docWithRelations.id,
+        depth: 1,
+      })
+
+      expect(doc.relationWithPopulate).toBeDefined()
+      expect(typeof doc.relationWithPopulate).toBe('object')
+
+      const populated = doc.relationWithPopulate
+
+      // Should have fields specified in populate
+      expect(populated.title).toBe('Related A Title')
+      expect(populated.number).toBe(42)
+
+      // Should NOT have fields not in populate (name is not in populate config)
+      expect(populated.name).toBeUndefined()
     })
   })
 })
